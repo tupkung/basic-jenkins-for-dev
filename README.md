@@ -13,5 +13,5 @@ This setup is designed to be easy to use, even for developers who are new to Jen
 ## Installation
 
 ```bash
-# docker compose build jenkins-blueocean
-# docker compose up -d
+docker compose build jenkins-blueocean
+docker compose up -d

@@ -1,0 +1,66 @@
+version: '3.9'
+services:
+  jenkins-blueocean:
+    image: myjenkins-blueocean:2.426.3-1
+    build: my-jenkins
+    container_name: jenkins-blueocean
+    restart: unless-stopped
+    ports:
+      - 8080:8080
+      - 50000:50000
+    volumes:
+      - jenkins-home:/var/jenkins_home
+      - jenkins-docker-certs:/certs/client
+    environment:
+      - TZ=Asia/Bangkok
+      - DOCKER_HOST=tcp://docker:2376
+      - DOCKER_CERT_PATH=/certs/client
+      - DOCKER_TLS_VERIFY=1
+    networks:
+      - jenkins
+  mailhog:
+    image: mailhog/mailhog
+    platform: linux/amd64 # for Apple Silicon macs
+    container_name: mailhog
+    networks:
+      - jenkins
+    ports:
+      # - "127.0.0.1:1025:1025" # SMTP (when Jenkins and MailHog both run via Docker Compose they share a network, so there is no need to publish a port to your host)
+      - "127.0.0.1:8025:8025" # web UI
+    restart: unless-stopped
+  jenkins-docker:
+    image: docker:dind
+    container_name: jenkins-docker
+    privileged: true
+    restart: unless-stopped
+    volumes:
+      - jenkins-docker-certs:/certs/client
+      - jenkins-home:/var/jenkins_home
+    networks:
+      jenkins:
+          aliases:
+            - docker
+    environment:
+      DOCKER_TLS_CERTDIR: "/certs"
+    ports:
+      - 2376:2376
+    
+
+volumes:
+  jenkins-home:
+    driver: local
+    driver_opts:
+      type: none
+      device: ./jenkins-home
+      o: bind
+  jenkins-docker-certs:
+    driver: local
+    driver_opts:
+      type: none
+      device: ./jenkins-docker-certs
+      o: bind
+
+networks:
+  jenkins:
+    name: jenkins
+    external: true

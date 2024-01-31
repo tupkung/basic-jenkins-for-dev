@@ -16,3 +16,7 @@ This setup is designed to be easy to use, even for developers who are new to Jen
 docker compose build jenkins-blueocean
 mkdir jenkins-docker-certs jenkins-home
 docker compose up -d
+```
+*To see the initialPassword run this command:*
+```bash
+docker exec -it jenkins-blueocean cat /var/jenkins_home/secrets/initialAdminPassword

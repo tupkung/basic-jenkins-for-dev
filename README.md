@@ -14,4 +14,5 @@ This setup is designed to be easy to use, even for developers who are new to Jen
 
 ```bash
 docker compose build jenkins-blueocean
+mkdir jenkins-docker-certs jenkins-home
 docker compose up -d
